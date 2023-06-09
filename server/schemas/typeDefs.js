@@ -1,28 +1,62 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-  type Tech {
-    _id: ID!
-    name: String!
-  }
+    type Auth {
+        token: ID!
+        user: User
+    }
 
-  type Matchup {
-    _id: ID!
-    tech1: String!
-    tech2: String!
-    tech1_votes: Int
-    tech2_votes: Int
-  }
+    type Movie {
+        _id: ID
+        externalMovieId: Int
+        rating: Float
+        voteCount: Int
+        title: String
+        overview: String
+        releaseDate: String
+        poster: String
+        trailer: String
+        likedUsers: [User]
+        dislikedUsers: [User]
+    }
 
-  type Query {
-    tech: [Tech]
-    matchups(_id: String): [Matchup]
-  }
+    type User {
+        _id: ID
+        username: String
+        email: String
+        friendCount: Int
+        friends: [User]
+        likedMovies: [Movie]
+        dislikedMovies: [Movie]
+    }
 
-  type Mutation {
-    createMatchup(tech1: String!, tech2: String!): Matchup
-    createVote(_id: String!, techNum: Int!): Matchup
-  }
+    type Query {
+        me: User
+        movies: [Movie]
+        movie(movieId: ID!): Movie
+        users: [User]
+        user(username: String!): User
+    }
+
+    input MovieInput {
+        externalMovieId: Int
+        rating: Float
+        voteCount: Int
+        title: String
+        overview: String
+        releaseDate: String
+        poster: String
+        trailer: String
+    }
+
+    type Mutation {
+        login(email: String!, password: String!): Auth
+        addUser(username: String!, email: String!, password: String!): Auth
+        addFriend(friendId: ID!): User
+        addMovie(input: MovieInput!): Movie
+        likeMovie(movieId: ID!): User
+        dislikeMovie(movieId: ID!): User
+    }
 `;
 
-module.exports = typeDefs;
+module.exports = typeDefs; 
